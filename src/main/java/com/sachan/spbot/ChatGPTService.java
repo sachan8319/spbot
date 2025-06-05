@@ -26,6 +26,7 @@ public class ChatGPTService {
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", "gpt-3.5-turbo");
         requestBody.put("messages", new Object[] { message });
+        System.out.println("\n[DEBUG] Prompt sent to ChatGPT:\n" + prompt);
 
         try {
             Map<String, Object> response = webClient.post()
@@ -35,15 +36,17 @@ public class ChatGPTService {
                 .block();
 
             if (response == null) return "No response from API.";
+        
 
             List<Map<String, Object>> choices = (List<Map<String, Object>>) response.get("choices");
             if (choices == null || choices.isEmpty()) return "No choices in response.";
 
             Map<String, Object> messageMap = (Map<String, Object>) choices.get(0).get("message");
             if (messageMap == null) return "No message in response.";
-
+            System.out.println("\n[DEBUG] ChatGPT raw response:\n" + messageMap.get("content").toString());
             return messageMap.get("content").toString();
         } catch (Exception e) {
+        	 System.err.println("\n[ERROR] ChatGPT API Error: " + e.getMessage());
             return "Sorry, I couldn't process your request.";
         }
     }

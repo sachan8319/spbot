@@ -17,11 +17,13 @@ public class BotController {
     private PropertySearchService propertySearchService;
 
     @PostMapping("/webhook")
-    public ResponseEntity<String> handleIncomingMessage(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<String> handleIncomingMessage(@RequestBody WebhookRequest request) {
         try {
-            String message = "test"; // mock
-            String sender = "whatsapp-id"; // mock
-
+            //String message = "test"; // mock
+            //String sender = "whatsapp-id"; // mock
+            String senderId = request.getSenderData().getSender();
+            String message = request.getMessageData().getTextMessageData().getTextMessage();
+            
             String propertyReply = propertySearchService.search(message);
             String finalReply = chatGPTService.askGPT("User asked: " + message +
                                                        ". Based on our listings: " + propertyReply);
